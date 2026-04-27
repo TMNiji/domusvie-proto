@@ -6,6 +6,11 @@ export default defineConfig({
   // This ensures built asset URLs are prefixed correctly.
   base: "/domusvie-proto/",
   plugins: [react()],
+  build: {
+    // For GitHub Pages "Deploy from a branch", set Pages to main /docs.
+    outDir: "docs",
+    emptyOutDir: true,
+  },
   server: {
     port: 5173,
     strictPort: false
