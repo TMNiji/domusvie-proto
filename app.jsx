@@ -7,36 +7,37 @@ import {
   BellRing, FileCheck2, Save, ScanLine, Newspaper, CalendarDays,
   UserCircle2, Smartphone, Monitor, Tablet, Info, CheckCircle2,
   Image as ImageIcon, MessageSquare, MoreHorizontal, Layers,
-  Archive, EyeOff, Filter
+  Archive, EyeOff, Filter, Camera, Heart, BookOpen, Smile, FilePlus
 } from "lucide-react";
 
 // ─── MODE CONTEXT ─────────────────────────────────────────────────────────────
 const ModeContext = React.createContext("mobile");
 
-// ─── DESIGN TOKENS — 100 % charte DomusVi ────────────────────────────────────
-// Sources : 231018_notre_identité_domusvi_fr — page 46
+// ─── DESIGN TOKENS — charte DomusVi 2024 ─────────────────────────────────────
+// Palette France : #F9E1DE · #FCF1EE · Manrope
 const C = {
-  bg:       "#FCF1EE",  // rose pâle web officiel
+  bg:       "#FFFFFF",  // fond blanc
   card:     "#FFFFFF",
-  pill:     "#FDDDD9",  // rose pâle pilule
-  pill2:    "#FBDCD9",
-  ink:      "#360A06",  // brun foncé profond
-  ink2:     "#6B5B58",  // brun grisé secondaire
-  ink3:     "#A8908C",  // brun très clair (derived, warm)
-  accent:   "#C2185B",  // badge / accent fort
-  urgent:   "#FF9EA1",  // "à faire / urgent" — charte
-  ok:       "#E3ECC2",  // vert tendre "validé" — charte
-  okDeep:   "#EEF4E2",  // vert légèrement plus soutenu — charte
-  blue:     "#6BC5DD",  // bleu doux "info" — charte
-  blueSoft: "#C4E6F9",  // bleu très clair — charte
-  info:     "#FFF1C2",  // jaune pâle "nouveau" — charte
-  infoDeep: "#FFF8E6",  // jaune très pâle — charte
-  neutral:  "#F5F5F0",  // gris neutre chaud — charte
-  neutral2: "#EBEAE3",  // gris légèrement plus foncé — charte
-  border:   "#EDE0DC",  // contour, dérivé rose pâle
+  pill:     "#F9E1DE",  // rose DomusVi France (charte 2024)
+  pill2:    "#FCF1EE",  // rose DomusVi France clair (charte 2024)
+  ink:      "#1C1C1E",  // noir quasi-pur (textes principaux)
+  ink2:     "#636366",  // gris moyen (textes secondaires)
+  ink3:     "#AEAEB2",  // gris clair (textes tertiaires)
+  accent:   "#C2185B",  // rose DomusVi — CTA principal
+  urgent:   "#FFCDD2",  // rouge très doux "urgent"
+  ok:       "#DCFCE7",  // vert tendre "validé"
+  okDeep:   "#F0FDF4",  // vert très pâle
+  blue:     "#6BC5DD",  // bleu doux "info"
+  blueSoft: "#DBEAFE",  // bleu très clair
+  info:     "#FEF9C3",  // jaune pâle "nouveau"
+  infoDeep: "#FEFCE8",  // jaune très pâle
+  neutral:  "#F5F5F7",  // gris Apple-like
+  neutral2: "#EBEBED",  // gris légèrement plus foncé
+  border:   "#E5E5EA",  // contour neutre doux
 };
-// Gradient CTA — uniquement sur boutons d'action primaires
-const GRAD = "linear-gradient(135deg, #E91E63 0%, #FF5722 100%)";
+// Gradient CTA — boutons d'action primaires
+// WCAG note: white text must stay >= 4.5:1 on the lightest stop.
+const GRAD = "linear-gradient(135deg, #D81B60 0%, #D43C1B 100%)";
 
 // ─── ATOMS ───────────────────────────────────────────────────────────────────
 const Btn = ({ children, icon: I, full, sm, onClick, disabled }) => (
@@ -76,9 +77,9 @@ const BtnWarn = ({ children, icon: I, full, sm, onClick }) => (
 
 const Card = ({ children, className = "", onClick, p = "p-5" }) => (
   <div onClick={onClick}
-    style={{ backgroundColor: C.card }}
-    className={`rounded-3xl ${p} shadow-[0_2px_12px_-6px_rgba(54,10,6,0.09)]
-      ${onClick ? "cursor-pointer hover:shadow-[0_6px_20px_-8px_rgba(54,10,6,0.15)] hover:-translate-y-0.5" : ""}
+    style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
+    className={`rounded-3xl ${p} shadow-[0_2px_16px_-6px_rgba(0,0,0,0.08),0_1px_4px_-2px_rgba(0,0,0,0.04)]
+      ${onClick ? "cursor-pointer hover:shadow-[0_8px_28px_-8px_rgba(0,0,0,0.14)] hover:-translate-y-0.5" : ""}
       transition-all duration-200 ${className}`}>
     {children}
   </div>
@@ -101,19 +102,20 @@ const Av = ({ init, size = 36, solid }) => (
 );
 
 const Tag = ({ label, tone = "info" }) => {
+  const fg = "#1C1C1E";
   const palette = {
-    new:     { bg: C.accent,   fg: "white" },
-    info:    { bg: C.info,     fg: C.ink2 },
-    urgent:  { bg: C.urgent,   fg: C.ink },
-    ok:      { bg: C.ok,       fg: C.ink },
-    okBlue:  { bg: C.blueSoft, fg: C.ink2 },
-    pending: { bg: C.infoDeep, fg: C.ink2 },
-    soft:    { bg: C.pill,     fg: C.accent },
-    neutral: { bg: C.neutral,  fg: C.ink2 },
+    new:     { bg: "#ECC6D4" },
+    info:    { bg: C.info },
+    urgent:  { bg: C.urgent },
+    ok:      { bg: C.ok },
+    okBlue:  { bg: C.blueSoft },
+    pending: { bg: C.infoDeep },
+    soft:    { bg: C.pill },
+    neutral: { bg: C.neutral },
   };
   const s = palette[tone] || palette.info;
   return (
-    <span style={{ backgroundColor: s.bg, color: s.fg }}
+    <span style={{ backgroundColor: s.bg, color: s.fg ?? fg }}
       className="inline-flex items-center px-2.5 py-[3px] rounded-full text-[11px] font-bold whitespace-nowrap">
       {label}
     </span>
@@ -121,7 +123,7 @@ const Tag = ({ label, tone = "info" }) => {
 };
 
 const Notif = ({ n = 0, onClick }) => (
-  <button onClick={onClick} style={{ backgroundColor: "white" }}
+  <button onClick={onClick} style={{ backgroundColor: "white", border: `1.5px solid ${C.border}` }}
     className="w-11 h-11 rounded-full flex items-center justify-center relative
       shadow-[0_2px_8px_-4px_rgba(54,10,6,0.12)] shrink-0">
     <Bell size={18} strokeWidth={1.8} style={{ color: C.ink }} />
@@ -159,7 +161,7 @@ const NotifPanel = ({ open, onClose }) => {
         {items.map((n, i) => (
           <button key={i} onClick={onClose}
             className="w-full flex items-start gap-3 rounded-2xl p-3 text-left active:opacity-80 transition-opacity"
-            style={{ backgroundColor: C.bg }}>
+            style={{ backgroundColor: C.neutral, border: `1px solid ${C.border}` }}>
             <div style={{ backgroundColor: C.pill }}
               className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
               <n.icon size={17} style={{ color: C.accent }} strokeWidth={1.8} />
@@ -201,7 +203,7 @@ const ProfilePanel = ({ open, onClose }) => (
       {/* Add */}
       <button onClick={onClose}
         className="w-full flex items-center gap-3 rounded-2xl p-4 text-left"
-        style={{ backgroundColor: C.bg, border: `1.5px dashed ${C.border}` }}>
+        style={{ backgroundColor: C.neutral, border: `1.5px dashed ${C.border}` }}>
         <div style={{ backgroundColor: "white", border: `1.5px dashed ${C.border}` }}
           className="w-11 h-11 rounded-full flex items-center justify-center shrink-0">
           <Plus size={18} style={{ color: C.ink2 }} />
@@ -234,8 +236,8 @@ const ResidentPicker = ({ open, current, onSelect, onClose }) => (
         <button key={i} onClick={() => onSelect(r)}
           className="w-full flex items-center gap-3 rounded-2xl p-3.5 text-left transition-opacity active:opacity-80"
           style={{
-            backgroundColor: current?.name === r.name ? C.pill : C.bg,
-            border: current?.name === r.name ? `1.5px solid ${C.accent}` : "1.5px solid transparent",
+            backgroundColor: current?.name === r.name ? C.pill : C.neutral,
+            border: current?.name === r.name ? `1.5px solid ${C.accent}` : `1.5px solid ${C.border}`,
           }}>
           <Av init={r.init} size={40} />
           <div className="flex-1 min-w-0">
@@ -251,9 +253,9 @@ const ResidentPicker = ({ open, current, onSelect, onClose }) => (
 
 // ─── ROLE PANEL ───────────────────────────────────────────────────────────────
 const STAFF_ROLES = [
-  { id: "manager",        label: "Manager",        sub: "Directeur · accès complet",               note: "Onglets : À traiter · Bibliothèque · Demandes · Administration" },
-  { id: "staff_premium",  label: "Staff premium",  sub: "ASD / IDE · droits étendus",              note: "Onglets : À traiter · Bibliothèque · Demandes (pas d'Administration)" },
-  { id: "staff_standard", label: "Staff standard", sub: "AS / Agent hôtelier · droits restreints", note: "Onglet : À traiter uniquement" },
+  { id: "collaborateur", label: "Collaborateur", sub: "AS / Agent hôtelier · droits restreints", note: "Onglet : À traiter uniquement" },
+  { id: "manager",       label: "Manager",       sub: "ASD / IDE · droits étendus",              note: "Onglets : À traiter · Bibliothèque · Demandes" },
+  { id: "directeur",     label: "Directeur",     sub: "Direction · accès complet",               note: "Onglets : À traiter · Bibliothèque · Demandes · Administration" },
 ];
 
 const RolePanel = ({ open, staffRole, onSelect, onClose }) => (
@@ -266,10 +268,10 @@ const RolePanel = ({ open, staffRole, onSelect, onClose }) => (
         <button key={r.id} onClick={() => onSelect(r.id)}
           className="w-full flex items-center gap-3 rounded-2xl p-4 text-left transition-opacity active:opacity-80"
           style={{
-            backgroundColor: staffRole === r.id ? C.pill : C.bg,
-            border: staffRole === r.id ? `1.5px solid ${C.accent}` : "1.5px solid transparent",
+            backgroundColor: staffRole === r.id ? C.pill : C.neutral,
+            border: staffRole === r.id ? `1.5px solid ${C.accent}` : `1.5px solid ${C.border}`,
           }}>
-          <Av init={r.id === "manager" ? "M" : r.id === "staff_premium" ? "SP" : "SS"}
+          <Av init={r.id === "directeur" ? "D" : r.id === "manager" ? "M" : "C"}
             size={40} solid={staffRole === r.id} />
           <div className="flex-1 min-w-0">
             <div style={{ color: C.ink }} className="text-[14px] font-bold">{r.label}</div>
@@ -343,7 +345,7 @@ const BottomSheet = ({ open, onClose, title, children, tall = false }) => {
             style={{ borderBottom: `1px solid ${C.border}` }}>
             <h3 style={{ color: C.ink }} className="text-[20px] font-extrabold leading-tight pr-4">{title}</h3>
             <button onClick={onClose}
-              style={{ backgroundColor: C.bg }}
+              style={{ backgroundColor: C.neutral, border: `1px solid ${C.border}` }}
               className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5">
               <X size={16} style={{ color: C.ink2 }} strokeWidth={2.5} />
             </button>
@@ -389,7 +391,7 @@ const BottomSheet = ({ open, onClose, title, children, tall = false }) => {
           style={{ borderBottom: `1px solid ${C.border}` }}>
           <h3 style={{ color: C.ink }} className="text-[18px] font-extrabold leading-tight pr-4">{title}</h3>
           <button onClick={onClose}
-            style={{ backgroundColor: C.bg }}
+            style={{ backgroundColor: C.neutral, border: `1px solid ${C.border}` }}
             className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5">
             <X size={16} style={{ color: C.ink2 }} strokeWidth={2.5} />
           </button>
@@ -414,7 +416,7 @@ const PhoneFrame = ({ children }) => (
       }}
       className="w-[390px] rounded-[48px] border-[10px] bg-black overflow-hidden"
     >
-      <div style={{ backgroundColor: C.bg, width: "100%", height: "100%" }}
+      <div style={{ backgroundColor: "#F5F5F7", width: "100%", height: "100%" }}
         className="mobile-view rounded-[38px] overflow-hidden relative flex flex-col">
         {/* Notch */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[34px] bg-black rounded-b-[20px] z-50 shrink-0" />
@@ -427,7 +429,7 @@ const PhoneFrame = ({ children }) => (
 const DesktopFrame = ({ children }) => (
   <div className="w-full">
     {/* Browser chrome — full width */}
-    <div style={{ backgroundColor: "#F8F1EF", borderBottom: `1px solid ${C.border}` }}
+    <div style={{ backgroundColor: "#F5F5F7", borderBottom: `1px solid ${C.border}` }}
       className="h-9 px-6 flex items-center gap-2 shrink-0">
       <div className="flex gap-1.5">
         <div className="w-3 h-3 rounded-full bg-[#FF6058]" />
@@ -440,7 +442,7 @@ const DesktopFrame = ({ children }) => (
       </div>
     </div>
     {/* Content — hauteur = 100vh moins topbar (76px) moins chrome (36px) */}
-    <div style={{ backgroundColor: C.bg, height: "calc(100vh - 112px)" }}
+    <div style={{ backgroundColor: "#F5F5F7", height: "calc(100vh - 112px)" }}
       className="flex overflow-hidden w-full relative">
       {children}
     </div>
@@ -450,7 +452,7 @@ const DesktopFrame = ({ children }) => (
 const TabletFrame = ({ children }) => (
   <div className="w-full">
     {/* Barre de statut tablette simulée */}
-    <div style={{ backgroundColor: "#F8F1EF", borderBottom: `1px solid ${C.border}` }}
+    <div style={{ backgroundColor: "#F5F5F7", borderBottom: `1px solid ${C.border}` }}
       className="h-9 px-6 flex items-center justify-between shrink-0">
       <div style={{ color: C.ink2 }} className="text-[11px] font-medium">FamilyVi Staff · Tablette</div>
       <div className="flex items-center gap-3">
@@ -472,7 +474,7 @@ const TabletFrame = ({ children }) => (
       </div>
     </div>
     {/* Content — hauteur = 100vh moins topbar (76px) moins barre statut (36px) */}
-    <div style={{ backgroundColor: C.bg, height: "calc(100vh - 112px)" }}
+    <div style={{ backgroundColor: "#F5F5F7", height: "calc(100vh - 112px)" }}
       className="flex overflow-hidden w-full relative">
       {children}
     </div>
@@ -590,8 +592,72 @@ const Sidebar = ({ active = "documents", compact }) => {
   );
 };
 
+// ─── STAFF MOBILE LAYOUT ────────────────────────────────────────────────────
+const StaffMobileHeader = ({ staffRole, onRole }) => {
+  const roleLabel = staffRole === "directeur" ? "Directeur" : staffRole === "collaborateur" ? "Collaborateur" : "Manager";
+  return (
+    <header style={{ backgroundColor: "white", borderBottom: `1px solid ${C.border}` }}
+      className="pt-10 pb-3 px-5 flex items-center justify-between shrink-0">
+      <div className="flex items-center gap-2">
+        <div style={{ backgroundColor: C.accent }}
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0">D</div>
+        <div>
+          <div style={{ color: C.ink2 }} className="text-[9px] font-semibold uppercase tracking-wide leading-tight">Les Cyclamens · Staff</div>
+          <div style={{ color: C.ink }} className="text-[13px] font-extrabold leading-tight">FamilyVi Staff</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <button onClick={onRole} style={{ backgroundColor: C.pill, color: C.accent }}
+          className="h-8 px-2.5 rounded-xl flex items-center gap-1 text-[11px] font-bold
+            hover:opacity-80 transition-opacity">
+          <Users size={12} strokeWidth={2} />{roleLabel}<ChevronDown size={10} strokeWidth={2.5} />
+        </button>
+        <Notif n={5} />
+      </div>
+    </header>
+  );
+};
+
+const StaffMobileNav = ({ active, onNav }) => {
+  const items = [
+    { id: "S1", label: "À traiter",  icon: Inbox,    badge: 5 },
+    { id: "S2", label: "Publier",    icon: FilePlus },
+    { id: "S3", label: "Demandes",   icon: Send,     badge: 3 },
+    { id: "S4", label: "Résidents",  icon: Users },
+  ];
+  return (
+    <nav style={{ backgroundColor: "white", borderTop: `1px solid ${C.border}` }}
+      className="px-2 pt-2 pb-6 flex items-center justify-around shrink-0">
+      {items.map(({ id, label, icon: Icon, badge }) => {
+        const on = active === id;
+        return (
+          <button key={id} onClick={() => onNav(id)}
+            className="flex flex-col items-center gap-0.5">
+            <div style={on ? { backgroundColor: C.pill } : {}}
+              className="px-3 py-1.5 rounded-full relative">
+              <Icon size={21} strokeWidth={on ? 2.2 : 1.7}
+                style={{ color: on ? C.accent : C.ink2 }} />
+              {badge && (
+                <span style={{ backgroundColor: C.accent }}
+                  className="absolute -top-0.5 -right-0.5 min-w-[14px] h-[14px] px-0.5
+                    text-[8px] font-black text-white rounded-full flex items-center justify-center">
+                  {badge}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] font-semibold"
+              style={{ color: on ? C.ink : C.ink2 }}>{label}</span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+};
+
 const TopBar = ({ compact, staffRole, onRole }) => {
-  const roleLabel = staffRole === "staff_premium" ? "Staff premium" : staffRole === "staff_standard" ? "Staff standard" : "Manager";
+  const appMode = React.useContext(ModeContext);
+  if (appMode === "staff-mobile") return null;
+  const roleLabel = staffRole === "directeur" ? "Directeur" : staffRole === "collaborateur" ? "Collaborateur" : "Manager";
   return (
     <header style={{ backgroundColor: "white", borderBottom: `1px solid ${C.border}` }}
       className={`h-14 ${compact ? "px-4" : "px-7"} flex items-center justify-between shrink-0`}>
@@ -646,6 +712,12 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
 
   const [kiosqueFilter, setKiosqueFilter] = useState("Tous");
 
+  // ─ Photo sharing sheet ─
+  const [photoSheet, setPhotoSheet] = useState(null); // null | 'source' | 'preview' | 'recipients' | 'success'
+  const [photoCaption, setPhotoCaption] = useState("");
+  const openPhotoShare = () => { setPhotoSheet("source"); setPhotoCaption(""); };
+  const closePhotoSheet = () => setPhotoSheet(null);
+
   const openUpload = (ctx = null) => {
     setSheetCtx(ctx);
     setSelectedCat(null);
@@ -673,7 +745,7 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
             <button key={cat.id}
               onClick={() => { setSelectedCat(cat); setSheet("choose"); }}
               className="w-full flex items-center gap-3 rounded-2xl px-4 py-3.5 text-left active:opacity-80 transition-opacity"
-              style={{ backgroundColor: C.bg }}>
+              style={{ backgroundColor: C.neutral, border: `1px solid ${C.border}` }}>
               <div style={{ backgroundColor: C.pill }}
                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
                 <cat.icon size={18} style={{ color: C.accent }} strokeWidth={1.8} />
@@ -689,7 +761,7 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
     if (sheet === "choose") return (
       <>
         {sheetCtx && (
-          <div style={{ backgroundColor: C.bg, borderLeft: `3px solid ${C.accent}` }}
+          <div style={{ backgroundColor: C.neutral, borderLeft: `3px solid ${C.accent}` }}
             className="rounded-r-2xl p-4 mb-5">
             <div style={{ color: C.ink2 }} className="text-[10px] font-bold uppercase tracking-wide mb-1">
               En réponse à la demande de
@@ -729,7 +801,7 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
           Vérifiez que le document est correct avant de l'envoyer.
         </p>
         <Card p="p-0" className="overflow-hidden mb-5">
-          <div style={{ backgroundColor: C.bg }} className="h-48 flex items-center justify-center">
+          <div style={{ backgroundColor: C.neutral }} className="h-48 flex items-center justify-center">
             <div style={{ backgroundColor: "white", border: `2px solid ${C.border}` }}
               className="w-32 h-40 rounded-xl shadow-md flex flex-col items-start p-3 gap-1.5">
               <div className="text-[9px] font-black" style={{ color: "#1E5BA8" }}>AssurEvolution</div>
@@ -787,7 +859,7 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
     : "Document envoyé ✓";
 
   return (
-    <div className="w-full flex flex-col relative" style={{ height: "100%", backgroundColor: C.bg }}>
+    <div className="w-full flex flex-col relative" style={{ height: "100%", backgroundColor: "#FFFFFF" }}>
       <FHeader onBell={onNotif} onProfile={onProfile} />
 
       {/* ── Tab switcher au sommet ── */}
@@ -814,7 +886,7 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
       <div className="flex-1 overflow-y-auto px-5 pb-28">
         {tab === "coffre" ? (
           <>
-            <h1 style={{ color: C.ink }} className="text-[28px] font-extrabold tracking-tight leading-tight mt-4">
+            <h1 style={{ color: "rgba(28, 28, 30, 1)" }} className="text-[28px] font-extrabold tracking-tight leading-tight mt-4">
               Mes documents
             </h1>
             <p style={{ color: C.ink2 }} className="text-[13px] font-medium mt-0.5 mb-4">
@@ -904,20 +976,112 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
             </div>
 
             {/* Dropdown filtre catégorie */}
-            <div style={{ backgroundColor: "white", border: `1px solid ${C.border}` }}
+            <div style={{ backgroundColor: C.neutral, border: `1px solid ${C.border}` }}
               className="relative h-10 rounded-2xl px-3 flex items-center gap-2 mb-4">
               <Filter size={13} style={{ color: C.ink2 }} />
               <select value={kiosqueFilter} onChange={e => setKiosqueFilter(e.target.value)}
                 className="flex-1 bg-transparent text-[13px] font-semibold outline-none appearance-none"
                 style={{ color: kiosqueFilter === "Tous" ? C.ink2 : C.ink }}>
-                {["Tous", "CVS", "Vie résidence", "Qualité", "Institutionnel"].map(opt => (
+                {["Tous", "Famille", "CVS", "Vie résidence", "Qualité", "Institutionnel"].map(opt => (
                   <option key={opt}>{opt}</option>
                 ))}
               </select>
               <ChevronDown size={13} style={{ color: C.ink2 }} className="pointer-events-none shrink-0" />
             </div>
 
-            {/* Sections filtrées */}
+            {/* ── Section Famille ── */}
+            {(kiosqueFilter === "Tous" || kiosqueFilter === "Famille") && (
+              <div className="mb-6">
+                <div style={{ color: C.ink2 }}
+                  className="text-[11px] font-bold uppercase tracking-wider mb-3 px-1">
+                  Famille
+                </div>
+
+                {/* Albums de famille */}
+                <div style={{ color: C.ink }} className="text-[13px] font-bold mb-2 px-1">
+                  Albums de famille
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 mb-4">
+                  {[
+                    { title: "Printemps 2026", date: "Avr. 2026", photos: 12, colors: ["#F9E1DE","#FCF1EE","#FDDDD9"], isNew: true },
+                    { title: "Anniversaire Jean", date: "Mar. 2026", photos: 8,  colors: ["#DBEAFE","#E0F2FE","#BAE6FD"] },
+                    { title: "Noël 2025",        date: "Déc. 2025", photos: 19, colors: ["#DCFCE7","#D1FAE5","#A7F3D0"] },
+                    { title: "Été 2025",          date: "Juil. 2025",photos: 24, colors: ["#FEF9C3","#FEF3C7","#FDE68A"] },
+                  ].map((album, i) => (
+                    <div key={i}
+                      style={{ border: `1px solid ${C.border}`, minWidth: 130, backgroundColor: "white" }}
+                      className="rounded-2xl overflow-hidden shrink-0 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.08)] cursor-pointer
+                        active:scale-[0.97] transition-transform">
+                      {/* Photo grid preview */}
+                      <div className="grid grid-cols-2 gap-[2px] h-[88px]">
+                        {album.colors.slice(0, 4).map((col, j) => (
+                          <div key={j} style={{ backgroundColor: col }}
+                            className="flex items-center justify-center">
+                            {j === 0 && <ImageIcon size={18} style={{ color: C.accent, opacity: 0.5 }} />}
+                          </div>
+                        ))}
+                        {album.colors.length < 4 && (
+                          <div style={{ backgroundColor: C.neutral }} className="flex items-center justify-center">
+                            <Plus size={14} style={{ color: C.ink3 }} />
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-3 py-2.5">
+                        <div className="flex items-center gap-1.5">
+                          <span style={{ color: C.ink }} className="text-[12px] font-bold truncate">{album.title}</span>
+                          {album.isNew && <Tag label="Nouveau" tone="new" />}
+                        </div>
+                        <div style={{ color: C.ink3 }} className="text-[10px] mt-0.5">
+                          {album.photos} photos · {album.date}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Photos partagées récemment */}
+                <div style={{ color: C.ink }} className="text-[13px] font-bold mb-2 px-1">
+                  Photos partagées récemment
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { sender: "Marie L.", init: "ML", caption: "Belle promenade dans le jardin ☀️", date: "Il y a 2h",
+                      thumb: "#F9E1DE", liked: false },
+                    { sender: "Paul L.",  init: "PL", caption: "Goûter d'anniversaire avec l'équipe", date: "Hier",
+                      thumb: "#DBEAFE", liked: true },
+                    { sender: "Julie D.", init: "JD", caption: "Papa et sa chambre toute décorée 🌸", date: "Lundi",
+                      thumb: "#DCFCE7", liked: false },
+                  ].map((p, i) => (
+                    <div key={i} style={{ backgroundColor: "white", border: `1px solid ${C.border}` }}
+                      className="rounded-2xl overflow-hidden shadow-[0_1px_8px_-4px_rgba(0,0,0,0.07)]">
+                      {/* Photo thumbnail */}
+                      <div style={{ backgroundColor: p.thumb, height: 100 }}
+                        className="w-full flex items-center justify-center relative">
+                        <ImageIcon size={32} style={{ color: C.accent, opacity: 0.35 }} />
+                        <div style={{ backgroundColor: "rgba(0,0,0,0.28)" }}
+                          className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full">
+                          <span className="text-white text-[10px] font-semibold">{p.date}</span>
+                        </div>
+                      </div>
+                      {/* Caption + actions */}
+                      <div className="px-3 py-2.5 flex items-start gap-2.5">
+                        <Av init={p.init} size={28} />
+                        <div className="flex-1 min-w-0">
+                          <div style={{ color: C.ink2 }} className="text-[11px] font-semibold">{p.sender}</div>
+                          <div style={{ color: C.ink }} className="text-[12px] leading-snug mt-0.5">{p.caption}</div>
+                        </div>
+                        <button className="mt-0.5 shrink-0">
+                          <Heart size={17} strokeWidth={2}
+                            style={{ color: p.liked ? C.accent : C.ink3, fill: p.liked ? C.accent : "none" }} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sections docs résidence filtrées */}
             {[
               { tag: "CVS",           docs: [{ t: "CR CVS T1 2026",                d: "15/03/2026" }] },
               { tag: "Vie résidence", docs: [{ t: "Journal de la résidence",        d: "15/04/2026", isNew: true },
@@ -937,7 +1101,8 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
                     <button key={i}
                       onClick={() => navigate("F3", { from: "F1", doc: { type: "residence", title: d.t, date: d.d } })}
                       className="w-full bg-white rounded-2xl px-4 py-3 flex items-center gap-3
-                        hover:scale-[0.995] transition-transform text-left">
+                        hover:scale-[0.995] transition-transform text-left"
+                      style={{ border: `1px solid ${C.border}` }}>
                       <div style={{ backgroundColor: C.pill }}
                         className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0">
                         <FileText size={20} style={{ color: C.accent }} strokeWidth={1.8} />
@@ -960,15 +1125,26 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
         )}
       </div>
 
-      {/* FAB — coffre-fort uniquement */}
+      {/* FAB — coffre-fort : déposer doc / kiosque famille : partager photo */}
       {tab === "coffre" && (
         <div className="relative shrink-0" style={{ height: 0 }}>
           <button onClick={() => openUpload(null)}
             style={{ background: GRAD, bottom: 8, right: 16 }}
             className="absolute h-12 px-4 rounded-2xl text-white text-[13px] font-bold
-              shadow-[0_8px_20px_-6px_rgba(233,30,99,0.5)]
+              shadow-[0_8px_20px_-6px_rgba(216,27,96,0.45)]
               flex items-center gap-2 z-30 hover:scale-[1.02] transition-transform">
             <Plus size={18} strokeWidth={2.5} />Déposer un document
+          </button>
+        </div>
+      )}
+      {tab === "kiosque" && (kiosqueFilter === "Tous" || kiosqueFilter === "Famille") && (
+        <div className="relative shrink-0" style={{ height: 0 }}>
+          <button onClick={openPhotoShare}
+            style={{ background: GRAD, bottom: 8, right: 16 }}
+            className="absolute h-12 px-4 rounded-2xl text-white text-[13px] font-bold
+              shadow-[0_8px_20px_-6px_rgba(216,27,96,0.45)]
+              flex items-center gap-2 z-30 hover:scale-[1.02] transition-transform">
+            <Camera size={17} strokeWidth={2.5} />Partager une photo
           </button>
         </div>
       )}
@@ -979,6 +1155,124 @@ const ScreenF1 = ({ navigate, onNav, showNotice, onNotif, onProfile }) => {
       {sheet && (
         <BottomSheet open={!!sheet} onClose={closeSheet} title={sheetTitle} tall={sheet === "preview"}>
           {sheetContent()}
+        </BottomSheet>
+      )}
+
+      {/* Photo sharing bottom sheet */}
+      {photoSheet && (
+        <BottomSheet open={!!photoSheet} onClose={closePhotoSheet}
+          title={
+            photoSheet === "source"     ? "Partager une photo" :
+            photoSheet === "preview"    ? "Aperçu" :
+            photoSheet === "recipients" ? "Envoyer à" :
+                                          "Photo partagée ✓"
+          }
+          tall={photoSheet === "preview"}>
+          {photoSheet === "source" && (
+            <div className="space-y-3">
+              <p style={{ color: C.ink2 }} className="text-[13px] mb-4 leading-relaxed">
+                Partagez un souvenir avec Jean et sa famille. La photo sera ajoutée à l'album partagé.
+              </p>
+              <Btn full icon={Camera} onClick={() => setPhotoSheet("preview")}>
+                Prendre une photo
+              </Btn>
+              <BtnOutline full icon={ImageIcon} onClick={() => setPhotoSheet("preview")}>
+                Choisir depuis ma galerie
+              </BtnOutline>
+              <div style={{ backgroundColor: C.pill2, border: `1px solid ${C.pill}` }}
+                className="rounded-2xl p-3 mt-2 flex gap-2.5">
+                <Heart size={13} style={{ color: C.accent }} className="shrink-0 mt-0.5" />
+                <span style={{ color: C.ink2 }} className="text-[11px] leading-relaxed">
+                  Les photos partagées sont visibles par Jean et les membres de la famille autorisés.
+                </span>
+              </div>
+            </div>
+          )}
+
+          {photoSheet === "preview" && (
+            <>
+              <p style={{ color: C.ink2 }} className="text-[13px] mb-4">
+                Vérifiez la photo avant de la partager.
+              </p>
+              {/* Photo preview placeholder */}
+              <div style={{ backgroundColor: C.pill, border: `1px solid ${C.border}` }}
+                className="rounded-2xl overflow-hidden mb-4 h-52 flex items-center justify-center relative">
+                <div className="flex flex-col items-center gap-2">
+                  <ImageIcon size={40} style={{ color: C.accent, opacity: 0.4 }} />
+                  <span style={{ color: C.ink3 }} className="text-[12px] font-medium">Photo sélectionnée</span>
+                </div>
+                <div style={{ backgroundColor: "rgba(0,0,0,0.25)" }}
+                  className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full">
+                  <span className="text-white text-[10px] font-semibold">1.2 Mo · JPG</span>
+                </div>
+              </div>
+              {/* Caption input */}
+              <div style={{ border: `1.5px solid ${C.border}`, backgroundColor: C.neutral }}
+                className="rounded-2xl px-4 py-3 mb-4 flex items-start gap-2.5">
+                <Smile size={16} style={{ color: C.ink3 }} className="shrink-0 mt-0.5" />
+                <input
+                  value={photoCaption}
+                  onChange={e => setPhotoCaption(e.target.value)}
+                  placeholder="Ajouter un message (optionnel)"
+                  style={{ color: C.ink, backgroundColor: "transparent" }}
+                  className="flex-1 text-[13px] outline-none placeholder:text-[#AEAEB2]"
+                />
+              </div>
+              <Btn full onClick={() => setPhotoSheet("recipients")}>Suivant</Btn>
+              <button onClick={() => setPhotoSheet("source")} style={{ color: C.ink2 }}
+                className="w-full h-10 mt-2 text-[13px] font-semibold">
+                Changer de photo
+              </button>
+            </>
+          )}
+
+          {photoSheet === "recipients" && (
+            <div className="space-y-3">
+              <p style={{ color: C.ink2 }} className="text-[13px] mb-2 leading-relaxed">
+                Choisissez qui peut voir cette photo :
+              </p>
+              {[
+                { init: "JL", name: "Jean Lefebvre", sub: "Résident · Chambre 24", checked: true },
+                { init: "ML", name: "Marie Lefebvre", sub: "Fille de Jean · vous", checked: true },
+                { init: "PL", name: "Paul Lefebvre", sub: "Fils de Jean", checked: true },
+              ].map((r, i) => (
+                <div key={i} style={{ backgroundColor: i === 0 ? C.pill2 : C.neutral, border: `1px solid ${C.border}` }}
+                  className="rounded-2xl p-3.5 flex items-center gap-3">
+                  <Av init={r.init} size={38} solid={i === 0} />
+                  <div className="flex-1 min-w-0">
+                    <div style={{ color: C.ink }} className="text-[13px] font-bold">{r.name}</div>
+                    <div style={{ color: C.ink2 }} className="text-[11px]">{r.sub}</div>
+                  </div>
+                  <div style={{ backgroundColor: r.checked ? C.accent : C.neutral2 }}
+                    className="w-5 h-5 rounded-full flex items-center justify-center">
+                    {r.checked && <Check size={11} strokeWidth={3} style={{ color: "white" }} />}
+                  </div>
+                </div>
+              ))}
+              <Btn full icon={Share2} onClick={() => setPhotoSheet("success")}>
+                Partager la photo
+              </Btn>
+            </div>
+          )}
+
+          {photoSheet === "success" && (
+            <div className="flex flex-col items-center py-4 text-center">
+              <div style={{ background: "linear-gradient(135deg, #F9E1DE 0%, #FCF1EE 100%)", border: `1px solid ${C.pill}` }}
+                className="w-20 h-20 rounded-full flex items-center justify-center mb-5">
+                <Heart size={36} strokeWidth={2} style={{ color: C.accent, fill: C.accent }} />
+              </div>
+              <h3 style={{ color: C.ink }} className="text-[22px] font-extrabold">Photo partagée !</h3>
+              <p style={{ color: C.ink2 }} className="text-[13px] mt-2 mb-5 leading-relaxed max-w-xs">
+                Votre photo a été ajoutée à l'album de famille et partagée avec Jean et sa famille.
+              </p>
+              <div style={{ backgroundColor: C.pill2, color: C.ink2, border: `1px solid ${C.pill}` }}
+                className="rounded-2xl px-4 py-3 mb-5 text-[12px] font-semibold flex items-center gap-2 w-full">
+                <BookOpen size={14} style={{ color: C.accent }} />
+                Visible dans l'album « Printemps 2026 »
+              </div>
+              <BtnOutline full onClick={closePhotoSheet}>Fermer</BtnOutline>
+            </div>
+          )}
         </BottomSheet>
       )}
     </div>
@@ -1013,7 +1307,7 @@ const ScreenF2 = ({ navigate, onNav, onNotif }) => {
   );
 
   return (
-    <div className="w-full flex flex-col" style={{ height: "100%", backgroundColor: C.bg }}>
+    <div className="w-full flex flex-col" style={{ height: "100%", backgroundColor: "#FFFFFF" }}>
       <header className="pt-10 pb-3 px-5 flex items-center gap-3 shrink-0">
         <button onClick={() => navigate("F1")}
           style={{ backgroundColor: "white" }}
@@ -1346,7 +1640,7 @@ const ScreenF4 = ({ navigate, onNav }) => {
             <div style={{ color: C.ink2 }} className="text-[10px] font-bold uppercase tracking-wide mb-1">Demandé par</div>
             <div style={{ color: C.ink }} className="text-[14px] font-bold">Les Cyclamens — Challex</div>
             <div style={{ color: C.ink2 }} className="text-[11px] mb-3">Le 24/04/2026 · Sophie Martin</div>
-            <div style={{ backgroundColor: C.bg, borderLeft: `3px solid ${C.accent}` }}
+            <div style={{ backgroundColor: C.neutral, borderLeft: `3px solid ${C.accent}` }}
               className="rounded-r-xl p-3">
               <div style={{ color: C.ink2 }} className="text-[10px] font-bold uppercase mb-1">Document attendu</div>
               <div style={{ color: C.ink }} className="text-[14px] font-bold">Attestation d'assurance habitation 2026</div>
@@ -1372,7 +1666,7 @@ const ScreenF4 = ({ navigate, onNav }) => {
         <div className="flex-1 overflow-y-auto px-5 pb-6">
           <p style={{ color: C.ink2 }} className="text-[13px] mb-4 mt-2">Vérifiez avant d'envoyer.</p>
           <Card p="p-0" className="overflow-hidden mb-4">
-            <div style={{ backgroundColor: C.bg }}
+            <div style={{ backgroundColor: C.neutral }}
               className="h-56 flex items-center justify-center">
               <div style={{ backgroundColor: "white", border: `2px solid ${C.border}` }}
                 className="w-36 h-48 rounded-xl shadow-md flex flex-col items-start p-3 gap-1.5">
@@ -1475,17 +1769,17 @@ const ScreenS1 = ({ navigate, compact, staffRole = "manager", onRole }) => {
 
   const tabLot = { todo: "MVP", library: "MVP", sent: "Lot 0.1", admin: "Lot 1" };
   const tabProfiles = {
-    todo:    "Manager, Staff standard, Staff premium",
-    library: "Manager, Staff premium",
-    sent:    "Manager, Staff premium",
-    admin:   "Manager, Système",
+    todo:    "Collaborateur, Manager, Directeur",
+    library: "Manager, Directeur",
+    sent:    "Manager, Directeur",
+    admin:   "Directeur, Système",
   };
 
   // Tabs visible selon le profil
   const visibleTabs = {
-    manager:        ["todo", "library", "sent", "admin"],
-    staff_premium:  ["todo", "library", "sent"],
-    staff_standard: ["todo"],
+    directeur:     ["todo", "library", "sent", "admin"],
+    manager:       ["todo", "library", "sent"],
+    collaborateur: ["todo"],
   }[staffRole] || ["todo", "library", "sent", "admin"];
 
   const todoRows = [
@@ -1521,41 +1815,74 @@ const ScreenS1 = ({ navigate, compact, staffRole = "manager", onRole }) => {
     (todoType   === "" || r.t.toLowerCase().includes(todoType.toLowerCase()))
   );
 
+  const mob = React.useContext(ModeContext) === "staff-mobile";
+  const kpis = [
+    { label: "Reçus à analyser",    value: 5,  bg: C.pill, icon: Inbox,      clickTab: "todo" },
+    { label: "Demandes en attente", value: 3,  bg: C.info, icon: Clock,      clickTab: "sent" },
+    { label: "Publiés ce mois",     value: 12, bg: C.ok,   icon: FileCheck2, clickTab: "library" },
+  ];
+  const tabDefs = [
+    { id: "todo",    label: mob ? "À traiter"  : "À traiter",         shortLabel: "À traiter",  n: 5 },
+    { id: "library", label: mob ? "Biblio"     : "Bibliothèque",      shortLabel: "Biblio",     n: null },
+    { id: "sent",    label: mob ? "Demandes"   : "Demandes envoyées", shortLabel: "Demandes",   n: 3 },
+    { id: "admin",   label: mob ? "Admin"      : "Administration",    shortLabel: "Admin",      lot1: true },
+  ];
+
   return (
     <div className="flex-1 flex flex-col min-w-0 relative overflow-hidden" style={{ height: "100%" }}>
       <TopBar compact={compact} staffRole={staffRole} onRole={onRole} />
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className={`${compact ? "px-5 py-4" : "px-8 pt-6 pb-4"} flex items-end justify-between shrink-0`}>
-          <div>
-            <p style={{ color: C.ink2 }} className="text-[11px] font-semibold uppercase tracking-wide mb-1">
-              Espace documentaire
-            </p>
-            <h1 style={{ color: C.ink }}
-              className={`${compact ? "text-2xl" : "text-[28px]"} font-extrabold tracking-tight`}>
-              Gérer les documents
-            </h1>
-          </div>
-          {tab !== "admin" && (
-            <div className="flex gap-2">
-              <BtnOutline sm icon={Send} onClick={() => setReqSheet("form")}>
-                {compact ? "Demander" : "Demander un justificatif"}
-              </BtnOutline>
-              <Btn sm icon={Plus} onClick={() => navigate("S2")}>
-                {compact ? "Nouveau" : "Nouveau document"}
-              </Btn>
+        <div className={`${compact ? "px-5 py-4" : "px-8 pt-6 pb-4"} shrink-0`}>
+          <div className={`${mob ? "flex flex-col gap-3" : "flex items-end justify-between"}`}>
+            <div>
+              {!mob && (
+                <p style={{ color: C.ink2 }} className="text-[11px] font-semibold uppercase tracking-wide mb-1">
+                  Espace documentaire
+                </p>
+              )}
+              <h1 style={{ color: C.ink }}
+                className={`${mob ? "text-[22px]" : compact ? "text-2xl" : "text-[28px]"} font-extrabold tracking-tight`}>
+                Gérer les documents
+              </h1>
             </div>
-          )}
+            {tab !== "admin" && (
+              <div className={`flex gap-2 ${mob ? "w-full" : ""}`}>
+                <BtnOutline sm icon={Send} onClick={() => setReqSheet("form")}
+                  full={mob}>
+                  Demander
+                </BtnOutline>
+                <Btn sm icon={Plus} onClick={() => navigate("S2")}
+                  full={mob}>
+                  Nouveau
+                </Btn>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* KPIs */}
-        {tab !== "admin" && (
+        {tab !== "admin" && (mob ? (
+          <div className="flex gap-2 px-5 mb-3 overflow-x-auto shrink-0">
+            {kpis.map((k, i) => (
+              <button key={i} onClick={() => setTab(k.clickTab)}
+                style={{ backgroundColor: C.card, textAlign: "left", flexShrink: 0 }}
+                className="rounded-2xl px-3 py-2.5 flex items-center gap-2.5
+                  shadow-[0_2px_12px_-6px_rgba(54,10,6,0.09)] transition-all duration-200">
+                <div style={{ backgroundColor: k.bg, width: 36, height: 36 }}
+                  className="rounded-xl flex items-center justify-center shrink-0">
+                  <k.icon size={16} strokeWidth={1.8} style={{ color: C.ink2 }} />
+                </div>
+                <div>
+                  <div style={{ color: C.ink }} className="text-xl font-black leading-none">{k.value}</div>
+                  <div style={{ color: C.ink2 }} className="text-[10px] font-semibold mt-0.5 leading-tight">{k.label}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
           <div className={`${compact ? "px-5" : "px-8"} grid grid-cols-3 gap-4 mb-4 shrink-0`}>
-            {[
-              { label: "Reçus à analyser",    value: 5,  bg: C.pill,     icon: Inbox,      clickTab: "todo" },
-              { label: "Demandes en attente", value: 3,  bg: C.info,     icon: Clock,      clickTab: "sent" },
-              { label: "Publiés ce mois",     value: 12, bg: C.ok,       icon: FileCheck2, clickTab: "library" },
-            ].map((k, i) => (
+            {kpis.map((k, i) => (
               <button key={i} onClick={() => setTab(k.clickTab)}
                 style={{ backgroundColor: C.card, textAlign: "left" }}
                 className="rounded-2xl p-4 shadow-[0_2px_12px_-6px_rgba(54,10,6,0.09)]
@@ -1573,29 +1900,24 @@ const ScreenS1 = ({ navigate, compact, staffRole = "manager", onRole }) => {
               </button>
             ))}
           </div>
-        )}
+        ))}
 
         {/* Tabs (filtrés selon le profil staff) */}
-        <div className={`${compact ? "px-5" : "px-8"} flex border-b shrink-0`}
+        <div className={`${compact ? "px-5" : "px-8"} flex border-b shrink-0 overflow-x-auto`}
           style={{ borderColor: C.border }}>
-          {[
-            { id: "todo",    label: "À traiter",         n: 5 },
-            { id: "library", label: "Bibliothèque",      n: null },
-            { id: "sent",    label: "Demandes envoyées", n: 3 },
-            { id: "admin",   label: "Administration",    lot1: true },
-          ].filter(t => visibleTabs.includes(t.id)).map(t => (
+          {tabDefs.filter(t => visibleTabs.includes(t.id)).map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               style={tab === t.id
                 ? { color: C.accent, borderColor: C.accent }
                 : { color: C.ink2, borderColor: "transparent" }}
-              className="px-4 py-3 text-[13px] font-bold border-b-2 -mb-[1px]
-                flex items-center gap-2 transition-colors whitespace-nowrap">
+              className={`${mob ? "px-3 py-2.5 text-[12px]" : "px-4 py-3 text-[13px]"} font-bold border-b-2 -mb-[1px]
+                flex items-center gap-1.5 transition-colors whitespace-nowrap`}>
               {t.label}
               {t.n != null && (
                 <span style={{ backgroundColor: tab === t.id ? C.accent : C.pill, color: tab === t.id ? "white" : C.accent }}
                   className="text-[10px] font-bold px-1.5 py-0.5 rounded min-w-[18px] text-center">{t.n}</span>
               )}
-              {t.lot1 && <Tag label="Lot 1" tone="ok" />}
+              {t.lot1 && !mob && <Tag label="Lot 1" tone="ok" />}
             </button>
           ))}
         </div>
@@ -1606,64 +1928,122 @@ const ScreenS1 = ({ navigate, compact, staffRole = "manager", onRole }) => {
           {tab === "todo" && (
             <div className={`${compact ? "px-5" : "px-8"} py-4 space-y-3`}>
               {/* Barre de filtres */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
-                  className="flex items-center gap-2 px-3 h-9 rounded-xl flex-1 min-w-[140px]">
-                  <Search size={13} style={{ color: C.ink2 }} />
-                  <input value={todoQuery} onChange={e => setTodoQuery(e.target.value)}
-                    placeholder="Famille…" className="bg-transparent text-[12px] outline-none flex-1"
-                    style={{ color: C.ink }} />
+              {mob ? (
+                <div className="space-y-2">
+                  <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
+                    className="flex items-center gap-2 px-3 h-9 rounded-xl">
+                    <Search size={13} style={{ color: C.ink2 }} />
+                    <input value={todoQuery} onChange={e => setTodoQuery(e.target.value)}
+                      placeholder="Rechercher une famille…" className="bg-transparent text-[12px] outline-none flex-1"
+                      style={{ color: C.ink }} />
+                  </div>
+                  <div className="flex gap-2">
+                    <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
+                      className="relative h-9 rounded-xl px-3 flex items-center gap-1 flex-1">
+                      <Filter size={11} style={{ color: C.ink2 }} />
+                      <select value={todoStatut} onChange={e => setTodoStatut(e.target.value)}
+                        className="w-full bg-transparent text-[11px] font-semibold outline-none appearance-none pr-4"
+                        style={{ color: todoStatut ? C.ink : C.ink2 }}>
+                        <option value="">Tous statuts</option>
+                        <option>Nouveau</option><option>À analyser</option>
+                        <option>Reçu</option><option>Validé</option>
+                      </select>
+                      <ChevronDown size={10} style={{ color: C.ink2 }} className="absolute right-2 pointer-events-none" />
+                    </div>
+                    <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
+                      className="relative h-9 rounded-xl px-3 flex items-center gap-1 flex-1">
+                      <FileText size={11} style={{ color: C.ink2 }} />
+                      <select value={todoType} onChange={e => setTodoType(e.target.value)}
+                        className="w-full bg-transparent text-[11px] font-semibold outline-none appearance-none pr-4"
+                        style={{ color: todoType ? C.ink : C.ink2 }}>
+                        <option value="">Tous types</option>
+                        <option value="assurance">Assurance</option>
+                        <option value="identité">Identité</option>
+                        <option value="mutuelle">Mutuelle</option>
+                      </select>
+                      <ChevronDown size={10} style={{ color: C.ink2 }} className="absolute right-2 pointer-events-none" />
+                    </div>
+                  </div>
                 </div>
-                <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
-                  className="relative h-9 rounded-xl px-3 flex items-center gap-1 min-w-[130px]">
-                  <Filter size={12} style={{ color: C.ink2 }} />
-                  <select value={todoStatut} onChange={e => setTodoStatut(e.target.value)}
-                    className="bg-transparent text-[12px] font-semibold outline-none appearance-none pr-4"
-                    style={{ color: todoStatut ? C.ink : C.ink2 }}>
-                    <option value="">Tous statuts</option>
-                    <option>Nouveau</option>
-                    <option>À analyser</option>
-                    <option>Reçu</option>
-                    <option>Validé</option>
-                  </select>
-                  <ChevronDown size={11} style={{ color: C.ink2 }} className="absolute right-2 pointer-events-none" />
+              ) : (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
+                    className="flex items-center gap-2 px-3 h-9 rounded-xl flex-1 min-w-[140px]">
+                    <Search size={13} style={{ color: C.ink2 }} />
+                    <input value={todoQuery} onChange={e => setTodoQuery(e.target.value)}
+                      placeholder="Famille…" className="bg-transparent text-[12px] outline-none flex-1"
+                      style={{ color: C.ink }} />
+                  </div>
+                  <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
+                    className="relative h-9 rounded-xl px-3 flex items-center gap-1 min-w-[130px]">
+                    <Filter size={12} style={{ color: C.ink2 }} />
+                    <select value={todoStatut} onChange={e => setTodoStatut(e.target.value)}
+                      className="bg-transparent text-[12px] font-semibold outline-none appearance-none pr-4"
+                      style={{ color: todoStatut ? C.ink : C.ink2 }}>
+                      <option value="">Tous statuts</option>
+                      <option>Nouveau</option>
+                      <option>À analyser</option>
+                      <option>Reçu</option>
+                      <option>Validé</option>
+                    </select>
+                    <ChevronDown size={11} style={{ color: C.ink2 }} className="absolute right-2 pointer-events-none" />
+                  </div>
+                  <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
+                    className="relative h-9 rounded-xl px-3 flex items-center gap-1 min-w-[160px]">
+                    <FileText size={12} style={{ color: C.ink2 }} />
+                    <select value={todoType} onChange={e => setTodoType(e.target.value)}
+                      className="bg-transparent text-[12px] font-semibold outline-none appearance-none pr-4"
+                      style={{ color: todoType ? C.ink : C.ink2 }}>
+                      <option value="">Tous types</option>
+                      <option value="assurance">Assurance</option>
+                      <option value="identité">Identité</option>
+                      <option value="imposition">Imposition</option>
+                      <option value="mutuelle">Mutuelle</option>
+                      <option value="rib">RIB</option>
+                    </select>
+                    <ChevronDown size={11} style={{ color: C.ink2 }} className="absolute right-2 pointer-events-none" />
+                  </div>
+                  {(todoQuery || todoStatut || todoType) && (
+                    <button onClick={() => { setTodoQuery(""); setTodoStatut(""); setTodoType(""); }}
+                      style={{ color: C.ink2 }} className="text-[11px] font-semibold hover:underline shrink-0">
+                      Réinitialiser
+                    </button>
+                  )}
                 </div>
-                <div style={{ backgroundColor: C.card, border: `1px solid ${C.border}` }}
-                  className="relative h-9 rounded-xl px-3 flex items-center gap-1 min-w-[160px]">
-                  <FileText size={12} style={{ color: C.ink2 }} />
-                  <select value={todoType} onChange={e => setTodoType(e.target.value)}
-                    className="bg-transparent text-[12px] font-semibold outline-none appearance-none pr-4"
-                    style={{ color: todoType ? C.ink : C.ink2 }}>
-                    <option value="">Tous types</option>
-                    <option value="assurance">Assurance</option>
-                    <option value="identité">Identité</option>
-                    <option value="imposition">Imposition</option>
-                    <option value="mutuelle">Mutuelle</option>
-                    <option value="rib">RIB</option>
-                  </select>
-                  <ChevronDown size={11} style={{ color: C.ink2 }} className="absolute right-2 pointer-events-none" />
-                </div>
-                {(todoQuery || todoStatut || todoType) && (
-                  <button onClick={() => { setTodoQuery(""); setTodoStatut(""); setTodoType(""); }}
-                    style={{ color: C.ink2 }} className="text-[11px] font-semibold hover:underline shrink-0">
-                    Réinitialiser
-                  </button>
-                )}
-              </div>
+              )}
               <Card p="p-0" className="overflow-hidden">
-                <div className="grid grid-cols-12 gap-3 px-5 py-3 border-b text-[11px] font-bold uppercase tracking-wide"
-                  style={{ borderColor: C.border, color: C.ink2 }}>
-                  <div className="col-span-3">Famille</div>
-                  <div className="col-span-5">Document</div>
-                  <div className="col-span-2">Reçu le</div>
-                  <div className="col-span-2">Statut</div>
-                </div>
+                {!mob && (
+                  <div className="grid grid-cols-12 gap-3 px-5 py-3 border-b text-[11px] font-bold uppercase tracking-wide"
+                    style={{ borderColor: C.border, color: C.ink2 }}>
+                    <div className="col-span-3">Famille</div>
+                    <div className="col-span-5">Document</div>
+                    <div className="col-span-2">Reçu le</div>
+                    <div className="col-span-2">Statut</div>
+                  </div>
+                )}
                 {filteredTodo.length === 0 && (
                   <div className="px-5 py-8 text-center" style={{ color: C.ink2 }}>
                     <p className="text-[13px] font-semibold">Aucun document ne correspond aux filtres.</p>
                   </div>
                 )}
-                {filteredTodo.map((r, i) => (
+                {filteredTodo.map((r, i) => (mob ? (
+                  <button key={i} onClick={() => navigate("S4")}
+                    className="w-full flex items-start gap-3 px-4 py-3.5 border-b last:border-0
+                      active:bg-[#FDF5F3] transition-colors text-left"
+                    style={{ borderColor: C.border }}>
+                    <Av init={r.f.split(" ").map(w => w[0]).join("").slice(0, 2)} size={36} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-0.5">
+                        <span style={{ color: C.ink }} className="text-[13px] font-bold leading-tight">{r.f}</span>
+                        <Tag label={r.lbl} tone={r.tone} />
+                      </div>
+                      <div style={{ color: C.ink2 }} className="text-[11px] truncate">{r.r}</div>
+                      <div style={{ color: C.ink }} className="text-[12px] font-semibold mt-1 leading-tight">{r.t}</div>
+                      <div style={{ color: C.ink2 }} className="text-[10px] mt-0.5">{r.d}</div>
+                    </div>
+                    <ChevronRight size={14} style={{ color: C.ink2 }} strokeWidth={2} className="shrink-0 mt-1" />
+                  </button>
+                ) : (
                   <button key={i} onClick={() => navigate("S4")}
                     className="w-full grid grid-cols-12 gap-3 px-5 py-3.5 items-center
                       hover:bg-[#FDF5F3] border-b last:border-0 transition-colors text-left"
@@ -1682,7 +2062,7 @@ const ScreenS1 = ({ navigate, compact, staffRole = "manager", onRole }) => {
                     <div style={{ color: C.ink2 }} className="col-span-2 text-[12px]">{r.d}</div>
                     <div className="col-span-2"><Tag label={r.lbl} tone={r.tone} /></div>
                   </button>
-                ))}
+                )))}
               </Card>
             </div>
           )}
@@ -2086,6 +2466,7 @@ const ScreenS2 = ({ navigate, compact, staffRole = "manager", onRole }) => {
     </div>
   );
 
+  const mob = React.useContext(ModeContext) === "staff-mobile";
   return (
     <div className="flex-1 flex flex-col min-w-0" style={{ height: "100%" }}>
       <TopBar compact={compact} staffRole={staffRole} onRole={onRole} />
@@ -2095,17 +2476,17 @@ const ScreenS2 = ({ navigate, compact, staffRole = "manager", onRole }) => {
             className="text-[12px] font-bold flex items-center gap-1 mb-2 hover:underline">
             <ChevronLeft size={13} />Retour
           </button>
-          <div className="flex items-end justify-between">
+          <div className={mob ? "space-y-3" : "flex items-end justify-between"}>
             <div>
               <h1 style={{ color: C.ink }}
-                className={`${compact ? "text-2xl" : "text-[28px]"} font-extrabold tracking-tight`}>
-                Nouveau document à diffuser
+                className={`${mob ? "text-[22px]" : compact ? "text-2xl" : "text-[28px]"} font-extrabold tracking-tight`}>
+                Nouveau document
               </h1>
               <p style={{ color: C.ink2 }} className="text-[13px] mt-1">Publier dans la bibliothèque résidence</p>
             </div>
-            <div className="flex gap-2">
-              <BtnOutline sm icon={Save} onClick={() => navigate("S1")}>Brouillon</BtnOutline>
-              <Btn sm icon={Send} onClick={() => setPublished(true)}>Publier</Btn>
+            <div className={`flex gap-2 ${mob ? "w-full" : ""}`}>
+              <BtnOutline sm icon={Save} onClick={() => navigate("S1")} full={mob}>Brouillon</BtnOutline>
+              <Btn sm icon={Send} onClick={() => setPublished(true)} full={mob}>Publier</Btn>
             </div>
           </div>
         </div>
@@ -2119,7 +2500,7 @@ const ScreenS2 = ({ navigate, compact, staffRole = "manager", onRole }) => {
                   style={{ backgroundColor: C.bg, border: `1px solid ${C.border}`, color: C.ink }}
                   className="w-full h-11 rounded-xl px-4 text-[13px] outline-none" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className={mob ? "space-y-3" : "grid grid-cols-2 gap-3"}>
                 <div>
                   <label style={{ color: C.ink }} className="text-[12px] font-bold block mb-1.5">Catégorie</label>
                   <select style={{ backgroundColor: C.bg, border: `1px solid ${C.border}`, color: C.ink }}
@@ -2134,25 +2515,32 @@ const ScreenS2 = ({ navigate, compact, staffRole = "manager", onRole }) => {
                   <label style={{ color: C.ink }} className="text-[12px] font-bold block mb-1.5">Accès</label>
                   <div style={{ backgroundColor: C.bg, border: `1px solid ${C.border}` }}
                     className="h-11 rounded-xl px-3 flex items-center justify-between">
-                    <span style={{ color: C.ink }} className="text-[13px] font-semibold">Espace résidence</span>
-                    <ChevronDown size={14} style={{ color: C.ink2 }} />
+                    <span style={{ color: C.ink }} className="text-[13px] font-semibold truncate pr-2">Espace résidence</span>
+                    <ChevronDown size={14} style={{ color: C.ink2 }} className="shrink-0" />
                   </div>
                 </div>
               </div>
               <div>
                 <label style={{ color: C.ink }} className="text-[12px] font-bold block mb-1.5">Fichier</label>
                 <div style={{ borderColor: C.pill, backgroundColor: "#FDF5F3" }}
-                  className="border-2 border-dashed rounded-2xl p-5 flex items-center gap-4">
+                  className="border-2 border-dashed rounded-2xl p-4 flex items-center gap-3">
                   <div style={{ backgroundColor: "white" }}
-                    className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0">
-                    <FileText size={20} style={{ color: C.accent }} strokeWidth={1.8} />
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+                    <FileText size={18} style={{ color: C.accent }} strokeWidth={1.8} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div style={{ color: C.ink }} className="text-[13px] font-bold">CR_CVS_T4_2026_v2.pdf</div>
+                    <div style={{ color: C.ink }} className="text-[13px] font-bold truncate">CR_CVS_T4_2026_v2.pdf</div>
                     <div style={{ color: C.ink2 }} className="text-[11px]">842 Ko · 12 pages</div>
                   </div>
-                  <button style={{ color: C.accent }} className="text-[12px] font-bold shrink-0">Remplacer</button>
+                  {!mob && (
+                    <button style={{ color: C.accent }} className="text-[12px] font-bold shrink-0">Remplacer</button>
+                  )}
                 </div>
+                {mob && (
+                  <button style={{ color: C.accent }} className="text-[12px] font-bold mt-1.5 w-full text-center">
+                    Remplacer le fichier
+                  </button>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[["Visible à partir du", "28/04/2026"], ["Visible jusqu'au", "Sans limite"]].map(([l, v], i) => (
@@ -2222,7 +2610,7 @@ const ScreenS2 = ({ navigate, compact, staffRole = "manager", onRole }) => {
           </div>
         </div>
       </div>
-      <LotBanner lot="MVP" profiles="Manager, Staff premium" atelier />
+      <LotBanner lot="MVP" profiles="Manager, Directeur" atelier />
     </div>
   );
 };
@@ -2254,6 +2642,7 @@ const ScreenS3 = ({ navigate, compact, staffRole = "manager", onRole }) => {
     </div>
   );
 
+  const mob = React.useContext(ModeContext) === "staff-mobile";
   return (
     <div className="flex-1 flex flex-col min-w-0 relative" style={{ height: "100%" }}>
       <TopBar compact={compact} staffRole={staffRole} onRole={onRole} />
@@ -2264,7 +2653,7 @@ const ScreenS3 = ({ navigate, compact, staffRole = "manager", onRole }) => {
             <ChevronLeft size={13} />Retour
           </button>
           <h1 style={{ color: C.ink }}
-            className={`${compact ? "text-2xl" : "text-[28px]"} font-extrabold tracking-tight`}>
+            className={`${mob ? "text-[22px]" : compact ? "text-2xl" : "text-[28px]"} font-extrabold tracking-tight`}>
             Demander un justificatif
           </h1>
           <p style={{ color: C.ink2 }} className="text-[13px] mt-1">
@@ -2364,7 +2753,7 @@ const ScreenS3 = ({ navigate, compact, staffRole = "manager", onRole }) => {
           </div>
         </div>
       </div>
-      <LotBanner lot="Lot 0.1" profiles="Manager, Staff premium" />
+      <LotBanner lot="Lot 0.1" profiles="Manager, Directeur" />
       <ResidentPicker open={resPickerOpen} current={resident}
         onSelect={r => { setResident(r); setResPickerOpen(false); }}
         onClose={() => setResPickerOpen(false)} />
@@ -2418,30 +2807,166 @@ const ScreenS4 = ({ navigate, compact, staffRole = "manager", onRole }) => {
     </div>
   );
 
+  const mob = React.useContext(ModeContext) === "staff-mobile";
   return (
     <div className="flex-1 flex flex-col min-w-0" style={{ height: "100%" }}>
       <TopBar compact={compact} staffRole={staffRole} onRole={onRole} />
-      <div className="flex-1 overflow-hidden flex flex-col pb-10">
-        <div className={`${compact ? "px-5 py-4" : "px-8 pt-6 pb-4"} flex items-start justify-between shrink-0`}>
-          <div>
-            <button onClick={() => navigate("S1")} style={{ color: C.accent }}
-              className="text-[12px] font-bold flex items-center gap-1 mb-2 hover:underline">
-              <ChevronLeft size={13} />Retour à la liste
-            </button>
-            <h1 style={{ color: C.ink }}
-              className={`${compact ? "text-xl" : "text-2xl"} font-extrabold tracking-tight`}>
-              Attestation assurance habitation
-            </h1>
-            <div style={{ color: C.ink2 }} className="text-[12px] mt-1 flex items-center gap-3 flex-wrap">
-              <span>Par <strong style={{ color: C.ink }}>Marie Lefebvre</strong></span>
-              <span>Pour <strong style={{ color: C.ink }}>Jean Lefebvre</strong> · ch. 24</span>
-              <span>26/04/2026 · 14h32</span>
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <div className={`${compact ? "px-5 py-4" : "px-8 pt-6 pb-4"} shrink-0`}>
+          <button onClick={() => navigate("S1")} style={{ color: C.accent }}
+            className="text-[12px] font-bold flex items-center gap-1 mb-2 hover:underline">
+            <ChevronLeft size={13} />Retour à la liste
+          </button>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h1 style={{ color: C.ink }}
+                className={`${mob ? "text-[18px]" : compact ? "text-xl" : "text-2xl"} font-extrabold tracking-tight`}>
+                Attestation assurance habitation
+              </h1>
+              <div style={{ color: C.ink2 }} className={`text-[11px] mt-1 ${mob ? "space-y-0.5" : "flex items-center gap-3 flex-wrap"}`}>
+                <span>Par <strong style={{ color: C.ink }}>Marie Lefebvre</strong></span>
+                {!mob && <span>Pour <strong style={{ color: C.ink }}>Jean Lefebvre</strong> · ch. 24</span>}
+                <span>{mob ? "Jean Lefebvre · ch. 24 · 26/04/2026" : "26/04/2026 · 14h32"}</span>
+              </div>
             </div>
+            <Tag label="En attente" tone="pending" />
           </div>
-          <Tag label="En attente" tone="pending" />
         </div>
 
-        <div className={`flex-1 ${compact ? "px-5" : "px-8"} grid grid-cols-12 gap-5 min-h-0 overflow-hidden`}>
+        {mob ? (
+          /* ── Mobile: stacked layout, PDF collapsed ── */
+          <div className="flex-1 overflow-y-auto px-5 pb-6 space-y-4">
+            {/* PDF card (collapsed) */}
+            <Card p="p-0" className="overflow-hidden">
+              <div className="px-4 py-3 flex items-center gap-3">
+                <div style={{ backgroundColor: C.pill }}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+                  <FileText size={18} style={{ color: C.accent }} strokeWidth={1.8} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div style={{ color: C.ink }} className="text-[12px] font-bold truncate">attestation_assurance_2026.pdf</div>
+                  <div style={{ color: C.ink2 }} className="text-[11px]">PDF · 2 pages · 01/01 → 31/12/2026</div>
+                </div>
+                <button style={{ color: C.accent }} className="text-[11px] font-bold flex items-center gap-1 shrink-0">
+                  <Eye size={13} />Voir
+                </button>
+              </div>
+              {/* Mini document preview */}
+              <div style={{ backgroundColor: C.neutral, borderTop: `1px solid ${C.border}` }} className="px-4 py-3">
+                <div style={{ backgroundColor: "white", boxShadow: "0 2px 8px -4px rgba(54,10,6,0.12)", color: C.ink }}
+                  className="rounded-lg p-3 text-[10px]">
+                  <div className="font-black text-[9px] mb-1" style={{ color: "#1E5BA8" }}>AssurEvolution · n° 2026-AH-487612</div>
+                  <div className="font-black mb-1">ATTESTATION D'ASSURANCE HABITATION</div>
+                  <div style={{ color: C.ink2 }}>M. Jean Lefebvre — Ch. 24, Les Cyclamens, Challex</div>
+                  <div style={{ color: C.ink2 }}>Valide du 01/01/2026 au 31/12/2026</div>
+                </div>
+              </div>
+              <button style={{ color: C.ink2, borderTop: `1px solid ${C.border}` }}
+                className="w-full py-2.5 text-[11px] font-semibold flex items-center justify-center gap-1.5">
+                <Download size={12} />Télécharger
+              </button>
+            </Card>
+
+            {/* Vérifications */}
+            <Card p="p-4">
+              <div style={{ color: C.ink2 }} className="text-[11px] font-bold uppercase tracking-wide mb-3">Vérifications</div>
+              {["Document lisible et complet", "Nom du résident présent", "Valide pour 2026"].map((c, i) => (
+                <div key={i} className="flex items-center gap-2.5 py-1.5">
+                  <div style={{ backgroundColor: C.ok }}
+                    className="w-5 h-5 rounded-full flex items-center justify-center shrink-0">
+                    <Check size={11} strokeWidth={3} style={{ color: C.ink }} />
+                  </div>
+                  <span style={{ color: C.ink }} className="text-[12px] font-semibold">{c}</span>
+                </div>
+              ))}
+            </Card>
+
+            {/* Actions */}
+            {decision !== "refusing" ? (
+              <div className="space-y-2.5">
+                <button onClick={() => setDecision("validated")}
+                  style={{ backgroundColor: C.ok, color: C.ink }}
+                  className="w-full py-3.5 rounded-2xl font-extrabold text-[14px] flex items-center
+                    justify-center gap-2 active:opacity-80 transition-all">
+                  <CheckCircle2 size={18} strokeWidth={2.2} />Valider le document
+                </button>
+                <BtnWarn full onClick={() => setDecision("refusing")} icon={X}>
+                  Refuser avec motif
+                </BtnWarn>
+              </div>
+            ) : (
+              <Card p="p-4">
+                <div style={{ color: C.accent }} className="text-[12px] font-bold uppercase tracking-wide mb-3">Motif du refus</div>
+                <div className="space-y-3">
+                  <div>
+                    <label style={{ color: C.ink }} className="text-[11px] font-bold block mb-1">Motif principal</label>
+                    <select value={refuseMotif} onChange={e => setRefuseMotif(e.target.value)}
+                      style={{ backgroundColor: C.bg, border: `1px solid ${C.border}`, color: C.ink }}
+                      className="w-full h-10 rounded-xl px-3 text-[12px] font-semibold outline-none">
+                      <option>Document illisible</option>
+                      <option>Document expiré</option>
+                      <option>Mauvais document</option>
+                      <option>Informations manquantes</option>
+                      <option>Autre</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ color: C.ink }} className="text-[11px] font-bold block mb-1">Type à redemander</label>
+                    <select value={refuseDocType} onChange={e => setRefuseDocType(e.target.value)}
+                      style={{ backgroundColor: C.bg, border: `1px solid ${C.border}`, color: C.ink }}
+                      className="w-full h-10 rounded-xl px-3 text-[12px] font-semibold outline-none">
+                      <option>Attestation d'assurance habitation</option>
+                      <option>Pièce d'identité</option>
+                      <option>Avis d'imposition</option>
+                      <option>Mutuelle complémentaire</option>
+                      <option>RIB</option>
+                      <option>Autre</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ color: C.ink }} className="text-[11px] font-bold block mb-1">Précisions</label>
+                    <textarea value={refuseDetail} onChange={e => setRefuseDetail(e.target.value)}
+                      rows={3} placeholder="Message à la famille…"
+                      style={{ backgroundColor: C.bg, border: `1px solid ${C.border}`, color: C.ink }}
+                      className="w-full rounded-xl p-2.5 text-[12px] outline-none resize-none" />
+                  </div>
+                  <div className="flex gap-2">
+                    <BtnOutline sm onClick={() => setDecision(null)}>Annuler</BtnOutline>
+                    <button onClick={() => setDecision("refused")}
+                      style={{ backgroundColor: C.accent, color: "white" }}
+                      className="flex-1 h-11 rounded-xl text-[12px] font-bold">
+                      Envoyer le refus
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Historique */}
+            <Card p="p-4">
+              <div style={{ color: C.ink2 }} className="text-[11px] font-bold uppercase tracking-wide mb-3">
+                Historique · Jean Lefebvre
+              </div>
+              <div className="space-y-3 relative pl-5">
+                <div className="absolute left-1.5 top-2 bottom-2 w-px" style={{ backgroundColor: C.border }} />
+                {[
+                  { d: "26/04", t: "Attestation assurance déposée",  tone: "pending" },
+                  { d: "24/04", t: "Demande envoyée (Marie & Paul)", tone: "info" },
+                  { d: "12/03", t: "Pièce d'identité validée",       tone: "ok" },
+                  { d: "08/02", t: "RIB validé",                     tone: "ok" },
+                ].map((h, i) => (
+                  <div key={i} className="relative">
+                    <div style={{ backgroundColor: h.tone === "ok" ? C.ok : h.tone === "pending" ? C.urgent : C.info }}
+                      className="absolute -left-5 top-1 w-3 h-3 rounded-full ring-2 ring-white" />
+                    <div style={{ color: C.ink }} className="text-[12px] font-semibold">{h.t}</div>
+                    <div style={{ color: C.ink2 }} className="text-[10px]">{h.d}/2026</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        ) : (
+        <div className={`flex-1 ${compact ? "px-5" : "px-8"} grid grid-cols-12 gap-5 min-h-0 overflow-hidden pb-10`}>
           {/* PDF */}
           <div className="col-span-7 min-h-0">
             <Card p="p-0" className="h-full flex flex-col overflow-hidden">
@@ -2590,8 +3115,9 @@ const ScreenS4 = ({ navigate, compact, staffRole = "manager", onRole }) => {
             </Card>
           </div>
         </div>
+        )}
       </div>
-      <LotBanner lot="Lot 0.1" profiles="Manager, Staff standard, Staff premium" atelier />
+      <LotBanner lot="Lot 0.1" profiles="Collaborateur, Manager, Directeur" atelier />
     </div>
   );
 };
@@ -2671,11 +3197,11 @@ const ScreenFS = ({ navigate }) => {
           {/* Zone de signature */}
           <div style={{ backgroundColor: "white", border: `2px dashed ${C.accent}`, minHeight: 160 }}
             className="rounded-2xl flex flex-col items-center justify-center gap-3 mb-4 p-6">
-            <FileSignature size={32} style={{ color: C.ink3 }} strokeWidth={1.5} />
-            <span style={{ color: C.ink3 }} className="text-[13px] font-semibold">
+            <FileSignature size={32} style={{ color: C.ink2 }} strokeWidth={1.5} />
+            <span style={{ color: C.ink2 }} className="text-[13px] font-semibold">
               Zone de signature
             </span>
-            <span style={{ color: C.ink3 }} className="text-[11px] text-center">
+            <span style={{ color: C.ink2 }} className="text-[11px] text-center">
               Tracez votre signature ici (prototype)
             </span>
           </div>
@@ -2736,17 +3262,42 @@ const ScreenFS = ({ navigate }) => {
 // ═════════════════════════════════════════════════════════════════════════════
 // APP ROOT
 // ═════════════════════════════════════════════════════════════════════════════
+/** Optional URL params for automated a11y runs (?auditMode=…&auditFamilleScreen=…&auditStaffScreen=…&auditStaffRole=…) */
+function parseAuditBoot() {
+  if (typeof window === "undefined") return null;
+  const p = new URLSearchParams(window.location.search);
+  if (!["auditMode", "auditFamilleScreen", "auditStaffScreen", "auditStaffRole"].some((k) => p.has(k))) {
+    return null;
+  }
+  const modeRaw = p.get("auditMode");
+  const modes = new Set(["mobile", "tablet", "desktop", "staff-mobile"]);
+  const mode = modes.has(modeRaw) ? modeRaw : "mobile";
+  const F = new Set(["F1", "F2", "F3", "F4", "F5", "FS"]);
+  const S = new Set(["S1", "S2", "S3", "S4"]);
+  const fs = p.get("auditFamilleScreen");
+  const ss = p.get("auditStaffScreen");
+  const sr = p.get("auditStaffRole");
+  const staffRole =
+    sr === "manager" || sr === "directeur" || sr === "collaborateur" ? sr : null;
+  return {
+    mode,
+    familleScreen: F.has(fs) ? fs : null,
+    staffScreen: S.has(ss) ? ss : null,
+    staffRole,
+  };
+}
+
 export default function App() {
-  const [mode, setMode] = useState("mobile");
-  const [familleScreen, setFamilleScreen] = useState("F1");
-  const [staffScreen, setStaffScreen] = useState("S1");
+  const [auditBoot] = useState(() => parseAuditBoot());
+  const [mode, setMode] = useState(() => auditBoot?.mode ?? "mobile");
+  const [familleScreen, setFamilleScreen] = useState(() => auditBoot?.familleScreen ?? "F1");
+  const [staffScreen, setStaffScreen] = useState(() => auditBoot?.staffScreen ?? "S1");
   const [showNotice, setShowNotice] = useState(false);
   const [f3From, setF3From] = useState("F2");
   const [f3Doc, setF3Doc] = useState({ type: "facture", title: "Facture novembre 2026" });
   const [f3DocList, setF3DocList] = useState([]);
   const [f3DocIdx, setF3DocIdx] = useState(-1);
   // ─ Overlay panels ─
-  const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   // ─ Animation states ─
   const [familleDir, setFamilleDir] = useState("forward");
@@ -2756,8 +3307,9 @@ export default function App() {
   const prevMode = useRef("mobile");
 
   // Staff role simulation
-  const [staffRole, setStaffRole] = useState("manager");
+  const [staffRole, setStaffRole] = useState(() => auditBoot?.staffRole ?? "manager");
   const [roleOpen,  setRoleOpen]  = useState(false);
+  const auditModeGuard = useRef(!!auditBoot);
 
   // Profondeur de navigation pour déterminer la direction d'animation
   const F_DEPTH = { F1: 0, F2: 1, F3: 2, F4: 2, F5: 2, FS: 2 };
@@ -2822,8 +3374,16 @@ export default function App() {
   useEffect(() => {
     const prev = prevMode.current;
     prevMode.current = mode;
-    if (mode === "mobile" && prev !== "mobile") setFamilleScreen("F1");
-    else if (mode !== "mobile" && prev === "mobile") setStaffScreen("S1");
+    if (auditModeGuard.current) {
+      auditModeGuard.current = false;
+      return;
+    }
+    const wasFamily = prev === "mobile";
+    const isFamily  = mode === "mobile";
+    const wasStaff  = !wasFamily;
+    const isStaff   = !isFamily;
+    if (isFamily && wasStaff) setFamilleScreen("F1");
+    else if (isStaff && wasFamily) setStaffScreen("S1");
   }, [mode]);
 
   const navFamille = (screen, ctx = {}) => {
@@ -2853,12 +3413,12 @@ export default function App() {
     setStaffScreen(screen);
   };
 
-  const compact = mode === "tablet";
+  const compact = mode === "tablet" || mode === "staff-mobile";
 
   const familleScreens = {
     F1: <ScreenF1 navigate={navFamille} onNav={navFamille} showNotice={showNotice}
-                  onNotif={() => setNotifOpen(true)} onProfile={() => setProfileOpen(true)} />,
-    F2: <ScreenF2 navigate={navFamille} onNav={navFamille} onNotif={() => setNotifOpen(true)} />,
+                  onProfile={() => setProfileOpen(true)} />,
+    F2: <ScreenF2 navigate={navFamille} onNav={navFamille} />,
     F3: <ScreenF3 navigate={navFamille} onNav={navFamille} f3From={f3From} f3Doc={f3Doc}
                   f3DocList={f3DocList} f3DocIdx={f3DocIdx} />,
     F4: <ScreenF4 navigate={navFamille} onNav={navFamille} />,
@@ -2879,7 +3439,7 @@ export default function App() {
 
   return (
     <ModeContext.Provider value={mode}>
-    <div style={{ fontFamily: '"Manrope", -apple-system, sans-serif', backgroundColor: "#EDE5E2", minHeight: "100vh" }}>
+    <div style={{ fontFamily: '"Manrope", -apple-system, sans-serif', backgroundColor: "#F5F5F7", minHeight: "100vh" }}>
       {/* Top bar */}
       <div style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)",
         borderBottom: `1px solid ${C.border}` }}
@@ -2900,11 +3460,12 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {[
-              { id: "mobile",  icon: Smartphone, label: "Mobile",   sub: "App Famille" },
-              { id: "tablet",  icon: Tablet,     label: "Tablette", sub: "App Staff" },
-              { id: "desktop", icon: Monitor,    label: "Desktop",  sub: "App Staff" },
+              { id: "mobile",       icon: Smartphone, label: "Famille",      sub: "Mobile" },
+              { id: "staff-mobile", icon: Smartphone, label: "Staff",        sub: "Mobile" },
+              { id: "tablet",       icon: Tablet,     label: "Staff",        sub: "Tablette" },
+              { id: "desktop",      icon: Monitor,    label: "Staff",        sub: "Desktop" },
             ].map(({ id, icon: Ic, label, sub }) => {
               const on = mode === id;
               return (
@@ -2912,12 +3473,12 @@ export default function App() {
                   style={on
                     ? { backgroundColor: C.accent, color: "white" }
                     : { backgroundColor: "white", color: C.ink, border: `1.5px solid ${C.border}` }}
-                  className="px-4 h-11 rounded-2xl flex items-center gap-2.5 font-bold text-[13px]
+                  className="px-3 h-11 rounded-2xl flex items-center gap-2 font-bold text-[13px]
                     hover:scale-[1.02] active:scale-[0.98] transition-all">
-                  <Ic size={16} strokeWidth={2} />
+                  <Ic size={15} strokeWidth={2} />
                   <div className="text-left leading-tight">
                     <div>{label}</div>
-                    <div className="text-[10px] font-medium opacity-80">{sub}</div>
+                    <div className="text-[10px] font-medium">{sub}</div>
                   </div>
                 </button>
               );
@@ -2926,15 +3487,15 @@ export default function App() {
 
           <div style={{ backgroundColor: C.info, color: C.ink2 }}
             className="px-3 py-1.5 rounded-xl text-[11px] font-semibold">
-            {mode === "mobile"
-              ? "App Famille — flux distinct du Staff"
-              : "App Staff — même flux, layout adapté"}
+            {mode === "mobile"       ? "App Famille — flux distinct du Staff"
+           : mode === "staff-mobile" ? "App Staff — version mobile Android"
+           :                          "App Staff — même flux, layout adapté"}
           </div>
         </div>
       </div>
 
       {/* Viewport — mobile centré, staff full-width */}
-      <div className={mode === "mobile" ? "max-w-[1500px] mx-auto" : "w-full"}>
+      <div className={(mode === "mobile" || mode === "staff-mobile") ? "max-w-[1500px] mx-auto" : "w-full"}>
         {mode === "mobile" && (
           <PhoneFrame>
             {/* Wrapper animé — w-full + overflow-hidden pour largeur constante */}
@@ -2945,9 +3506,21 @@ export default function App() {
             {/* FNav hors du wrapper animé pour ne pas glisser lors des transitions */}
             <FNav active="compte" onNav={navFamille} />
             {/* Panels — z-50, couvrent FNav via le stacking context du PhoneFrame */}
-            <NotifPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
             <ProfilePanel open={profileOpen} onClose={() => setProfileOpen(false)} />
             {showNotice && <ModuleNotice />}
+          </PhoneFrame>
+        )}
+        {mode === "staff-mobile" && (
+          <PhoneFrame>
+            <StaffMobileHeader staffRole={staffRole} onRole={() => setRoleOpen(true)} />
+            <div key={staffKey}
+              className={`w-full flex-1 overflow-hidden flex flex-col ${animClass(staffDir)}`}>
+              {staffScreens[staffScreen]}
+            </div>
+            <StaffMobileNav active={staffScreen} onNav={navStaff} />
+            <RolePanel open={roleOpen} staffRole={staffRole}
+              onSelect={r => { setStaffRole(r); setRoleOpen(false); }}
+              onClose={() => setRoleOpen(false)} />
           </PhoneFrame>
         )}
         {mode === "desktop" && (
